@@ -7,11 +7,6 @@ library(thematic)
 
 ui <- function(request) {
   fluidPage(
-  
-# Assignment B4 Feature 1: I added a theme to my Shiny app. Although functionally, there is not much value to this action, it really enhances
-# the appearance of my webpage and also, because it is exploring a dataset about penguins, I added a black and white theme to match the colours
-# of the focal species! Also, this theme really makes the tabs stand out, which direct the viewer to interact with them more than the previosu theme.
-  
   theme = bs_theme(version = , bootswatch = "sketchy"),
   
   titlePanel(h1("Palmer Penguins Body Mass")),
@@ -34,7 +29,13 @@ ui <- function(request) {
       h4("Select an Antarctic Island to view it's penguin body mass data!"),
       selectInput("islandInput", "island", 
                   choices = c("Torgersen", "Biscoe", "Dream"),
-                  selected = "Torgersen"), 
+                  selected = "Torgersen"),
+      selectInput("xinput", "x axis",
+                  choices = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"), 
+                  selected = "flipper_length_mm"),
+      selectInput("yinput", "y axis",
+                  choices = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"),
+                  selected = "body_mass_g"),
       br(),
       
 # Assignment B3 Feature 2: I added an image that I created from Creative Commons free-to-use (with attribution) licensed images of each species of penguin
@@ -47,7 +48,7 @@ ui <- function(request) {
       br(),
       br(),
 
-# Assignment B4 Feature 2: I added a button that downloads the PalmerPenguins dataset that this used in this Shinyapp. This is a really helpful
+# Assignment B4 Feature 1: I added a button that downloads the PalmerPenguins dataset that this used in this Shinyapp. This is a really helpful
 # addition to this webpage because it allows the users to download the dataset that is being displayed through online so that they can work
 # with the csv data file themselves via easy and quick access.
 
@@ -66,7 +67,7 @@ ui <- function(request) {
                  br(),
                  br(),
                  
-# Assignment B4 Feature 3: I added the bookmark button to the plot tab of Shiny app so that people are able to bookmark a specific version of my webpage
+# Assignment B4 Feature 2: I added the bookmark button to the plot tab of Shiny app so that people are able to bookmark a specific version of my webpage
 # to share with other people or save. For example, if you select to view the Dream island data you can bookmark this and send the URL to someone and they will open the app to those exact settings.
 # This is quite helpful for the sharing of this data. 
          
@@ -74,9 +75,11 @@ ui <- function(request) {
                    label = "Bookmark these settings!",
                    title = "Bookmark the current state of the application to share with others or save.")),
 
-        tabPanel(h4("Table"), DT::dataTableOutput("penguins_table"))
+        tabPanel(h4("Table"), DT::dataTableOutput("penguins_table")),
+        tabPanel(h4("Scatterplot"),
+                 plotOutput("penguins_scatterplot"))
        )
-     ),
+     )
    )
  )
 }
@@ -97,6 +100,16 @@ server <- function(input, output) {
   output$penguins_table <- DT::renderDataTable({
     penguins_filtered()
   })
+
+# Assignment B4 Feature 3: I added a scatterplot to my app with interactive x and y axes that allow the user to compare the correlation 
+# between flipper length, bill length, bill depth and body mass. This is a super useful visualization of the trends in the penguins, and 
+# because I am still also using the reactive dataset that filters by island, you can compare these trends across islands to see if they
+# are similar or not.
+  
+output$penguins_scatterplot <- renderPlot({
+    ggplot(penguins_filtered(), aes_string(x = input$xinput, y = input$yinput)) +
+    geom_point(size = 3, color = "orange")
+})
   
   penguinsdata <- penguins
   
