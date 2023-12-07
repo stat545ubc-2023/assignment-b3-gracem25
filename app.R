@@ -26,10 +26,11 @@ ui <- function(request) {
   
   sidebarLayout(
     sidebarPanel(
-      h4("Select an Antarctic Island to view it's penguin body mass data!"),
+      h4("Select an Antarctic Island to view it's data!"),
       selectInput("islandInput", "island", 
                   choices = c("Torgersen", "Biscoe", "Dream"),
                   selected = "Torgersen"),
+      h4("For the scatterplot, select x and y axis data!"),
       selectInput("xinput", "x axis",
                   choices = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"), 
                   selected = "flipper_length_mm"),
